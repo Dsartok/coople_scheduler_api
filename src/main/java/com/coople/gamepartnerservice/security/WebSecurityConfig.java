@@ -14,6 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration class for setting up Spring Security in the web application.
+ *
+ * This class uses annotations like @Configuration, @EnableWebSecurity to declare that it provides
+ * configuration information and enables Spring Security for the application.
+ *
+ * Uses @RequiredArgsConstructor to generate a constructor injecting the required dependencies.
+ *
+ * The class defines three main beans:
+ * 1. applicationSecurity.
+ * 2. passwordEncoder.
+ * 3. authenticationManager.
+ *
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -23,8 +37,19 @@ public class WebSecurityConfig {
     private final CustomUserDetailService customUserDetailService;
     private final UnauthorizedHandler unauthorizedHandler;
 
+    /**
+     * Configures the security settings for the application.
+     *
+     * @param http the HttpSecurity object to configure security settings.
+     * @return the configured SecurityFilterChain.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
+
+        // Configures JWT authentication filter and various security settings
+        // such as CORS, CSRF, session management, exception handling, and authorization rules.
+        // Allows public access to certain paths like Swagger documentation and authentication-related endpoints.
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
@@ -37,24 +62,41 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(registry -> registry
                     .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/v2/api-docs/**").permitAll()
                     .requestMatchers("/").permitAll()
-                    .requestMatchers("/public/**").permitAll()
-                    .requestMatchers("/auth/login").permitAll()
-                    .requestMatchers("/admin").hasRole("ADMIN")
-                    .requestMatchers("/user").hasRole("USER")
+                    .requestMatchers("/coople_scheduler_api/public/**").permitAll()
+                    .requestMatchers("/coople_scheduler_api/auth/login").permitAll()
+                    .requestMatchers("/coople_scheduler_api/auth/reset-password").permitAll()
+                    .requestMatchers("/coople_scheduler_api/auth/register").permitAll()
+                    .requestMatchers("/coople_scheduler_api/games").permitAll()
+                    .requestMatchers("/coople_scheduler_api/admin").hasRole("ADMIN")
+                    .requestMatchers("/coople_scheduler_api/user").hasRole("USER")
+                    .requestMatchers("/coople_scheduler_api/schedules").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
             );
 
         return http.build();
     }
 
+    /**
+     * Configures the password encoder for the application.
+     *
+     * @return a BCryptPasswordEncoder as the default password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the authentication manager for the application.
+     *
+     * @param http the HttpSecurity object to configure authentication manager.
+     * @return the configured AuthenticationManager.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
 
+        // Configures the authentication manager with the custom UserDetailsService and password encoder.
         var builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder
                 .userDetailsService(customUserDetailService)

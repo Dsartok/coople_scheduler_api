@@ -1,42 +1,15 @@
-# Database Configuration for PostgreSQL
+# Main configuration
+
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/coople_scheduler_api
-    username: superUser
-    password: superUser
-    driver-class-name: org.postgresql.Driver
+  application:
+    name: coople_scheduler_api
+  profiles:
+    active: ${activatedProperties}
 
-# Hibernate Configuration
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+activatedProperties: dev
 
-# Logging Configuration
-logging:
-  level:
-    org.springframework: INFO
-    com.example: DEBUG
-
-# Server Configuration
-server:
-  port: 8085
-
-# JWT Configuration
 application:
   security:
     jwt:
-      secret-key: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
+      secret-key: "a88d288a60ea60694eb71e667502c653c21a4202e9713ef2076be8c1afb60446"
       token-duration: 86400000 # a day
-#      expiration: 86400000 # a day
-#      refresh-token:
-#        expiration: 604800000 # 7 days
-
-
-# For test
-#spring:
-#  main:
-#    allow-circular-references: true
