@@ -27,14 +27,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * 2. passwordEncoder.
  * 3. authenticationManager.
  *
+ * @version 1.0
+ * @since 14-12-2023
+ * @author maupa13
  */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    /**
+     * The JwtAuthenticationFilter responsible for processing JWTs during the authentication process.
+     */
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    /**
+     * The CustomUserDetailService providing user details for authentication.
+     */
     private final CustomUserDetailService customUserDetailService;
+
+    /**
+     * The UnauthorizedHandler handling unauthorized access to secure resources.
+     */
     private final UnauthorizedHandler unauthorizedHandler;
 
     /**
@@ -60,16 +74,19 @@ public class WebSecurityConfig {
             .exceptionHandling(h -> h.authenticationEntryPoint(unauthorizedHandler))
             .securityMatcher("/**")
             .authorizeHttpRequests(registry -> registry
-                    .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/v2/api-docs/**").permitAll()
+                    .requestMatchers("/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**",
+                            "/v2/api-docs/**").permitAll()
                     .requestMatchers("/").permitAll()
-                    .requestMatchers("/coople_scheduler_api/public/**").permitAll()
-                    .requestMatchers("/coople_scheduler_api/auth/login").permitAll()
-                    .requestMatchers("/coople_scheduler_api/auth/reset-password").permitAll()
-                    .requestMatchers("/coople_scheduler_api/auth/register").permitAll()
-                    .requestMatchers("/coople_scheduler_api/games").permitAll()
-                    .requestMatchers("/coople_scheduler_api/admin").hasRole("ADMIN")
-                    .requestMatchers("/coople_scheduler_api/user").hasRole("USER")
-                    .requestMatchers("/coople_scheduler_api/schedules").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/public/**").permitAll()
+                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers("/auth/reset-password").permitAll()
+                    .requestMatchers("/auth/register").permitAll()
+                    .requestMatchers("/games").permitAll()
+                    .requestMatchers("/admin").hasRole("ADMIN")
+                    .requestMatchers("/user").hasRole("USER")
+                    .requestMatchers("/schedules").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
             );
 

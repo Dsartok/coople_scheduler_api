@@ -6,8 +6,33 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Component responsible for converting a decoded JWT (JSON Web Token) into a UserPrincipal.
+ * This class is annotated with Spring's @Component, making it a Spring Bean.
+ * It is responsible for extracting user information from the decoded JWT and creating a UserPrincipal.
+ *
+ * @see org.springframework.stereotype.Component
+ * @see com.auth0.jwt.interfaces.DecodedJWT
+ * @see UserPrincipal
+ * @see org.springframework.security.core.authority.SimpleGrantedAuthority
+ * @see lombok.Builder
+ *
+ * @version 1.0
+ * @since 14-12-2023
+ * @author maupa13
+ */
 @Component
 public class JwtToPrincipalConverter {
+
+    /**
+     * Converts a decoded JWT to a UserPrincipal.
+     *
+     * @param jwt The decoded JWT.
+     * @return The UserPrincipal created from the JWT.
+     * @see com.auth0.jwt.interfaces.DecodedJWT
+     * @see UserPrincipal
+     * @see org.springframework.security.core.authority.SimpleGrantedAuthority
+     */
     public UserPrincipal convert(DecodedJWT jwt) {
         var authorityList = getClaimOrEmptyList(jwt, "authorities").stream()
                 .map(SimpleGrantedAuthority::new)
@@ -20,6 +45,14 @@ public class JwtToPrincipalConverter {
                 .build();
     }
 
+    /**
+     * Retrieves a claim from the decoded JWT or returns an empty list if the claim is null.
+     *
+     * @param jwt   The decoded JWT.
+     * @param claim The claim to retrieve.
+     * @return The list of values for the specified claim or an empty list if the claim is null.
+     * @see com.auth0.jwt.interfaces.DecodedJWT
+     */
     private List<String> getClaimOrEmptyList(DecodedJWT jwt, String claim) {
         if (jwt.getClaim(claim).isNull()) return List.of();
 

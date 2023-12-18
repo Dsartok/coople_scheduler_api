@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Set;
 
 /**
- * A data transfer object (DTO) representing a request to create a game.
+ * A data transfer object (DTO) representing a request to update a game.
  * This class is immutable and is typically used to transfer data between layers of an application.
  * It is annotated with Lombok's @Getter and @Builder to automatically generate getters and a builder.
  *
@@ -16,7 +16,12 @@ import java.util.Set;
  */
 @Getter
 @Builder
-public class GameRequest {
+public class GameRequestUpdate {
+
+    /**
+     * The title of the game.
+     */
+    private final Long id;
 
     /**
      * The title of the game.
@@ -24,14 +29,19 @@ public class GameRequest {
     private final String title;
 
     /**
-     * The genre of the game.
+     * The description of the game.
      */
-    private final String genre;
+    private String description;
 
     /**
      * The set of platforms on which the game is available.
      */
     private final Set<String> platforms;
+
+    /**
+     * The genre of the game.
+     */
+    private final String genre;
 
     /**
      * The amount of players the game supports.

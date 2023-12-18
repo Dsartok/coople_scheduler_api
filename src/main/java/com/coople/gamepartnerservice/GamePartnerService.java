@@ -1,6 +1,8 @@
 package com.coople.gamepartnerservice;
 
 import com.coople.gamepartnerservice.model.RegistrationRequest;
+import com.coople.gamepartnerservice.model.UserRequestUpdate;
+import com.coople.gamepartnerservice.repository.UserRepository;
 import com.coople.gamepartnerservice.service.AuthService;
 import com.coople.gamepartnerservice.service.RegistrationService;
 import com.coople.gamepartnerservice.service.UserService;
@@ -40,33 +42,48 @@ public class GamePartnerService {
     @Bean
     public CommandLineRunner commandLineRunner(UserService userService,
                                                RegistrationService registrationService,
-                                               AuthService authService) {
+                                               AuthService authService,
+                                               UserRepository userRepository) {
         return args -> {
 
             // Admin registration
             var adminEmail = "admin@mail.com";
             var adminPassword = "AdminPassword";
-            if (userService.findByEmail(adminEmail).isEmpty()) {
+            var adminName = "Admin";
+            if (userService.findByName(adminName).isEmpty()) {
+
+                // Register new admin
                 var admin = RegistrationRequest.builder()
-                        .name("Admin")
+                        .name(adminName)
                         .email(adminEmail)
                         .password(adminPassword)
                         .build();
 
                 registrationService.registerUser(admin);
+
+                // Change role from "ROLE_USER" to "ROLE_ADMIN"
+                UserRequestUpdate userRequestUpdate = UserRequestUpdate.builder()
+                        .email(adminEmail)
+                        .name(adminName)
+                        .password(adminPassword)
+                        .build();
+
+                Long adminId = userRepository.findByEmailIgnoreCase(adminEmail).getId();
+
+                userService.updateUserToAdmin(adminId, userRequestUpdate);
             } else {
                 System.out.println("Admin already exists. Skipping registration.");
             }
 
-            System.out.println("Token Admin: " + authService.attemptLogin(adminEmail, adminPassword)
-                               + ". Check role.");
+            System.out.println("Token Admin: " + authService.attemptLogin(adminName, adminPassword));
 
             // User registration
             var userEmail = "user@mail.com";
             var userPassword = "UserPassword";
-            if (userService.findByEmail(userEmail).isEmpty()) {
+            var userName = "User";
+            if (userService.findByName(userName).isEmpty()) {
                 var user = RegistrationRequest.builder()
-                        .name("User")
+                        .name(userName)
                         .email(userEmail)
                         .password(userPassword)
                         .build();
@@ -76,8 +93,7 @@ public class GamePartnerService {
                 System.out.println("User already exists. Skipping registration.");
             }
 
-            System.out.println("Token User: " + authService.attemptLogin(adminEmail, adminPassword)
-                               + ". Check role.");
+            System.out.println("Token User: " + authService.attemptLogin(userName, userPassword));
         };
     }
 }

@@ -2,27 +2,19 @@ package com.coople.gamepartnerservice.repository;
 
 import com.coople.gamepartnerservice.entity.GameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.lang.*;
 
-import java.util.List;
-import java.util.Optional;
 
+/**
+ * Repository interface for managing game entities in the database.
+ * This interface extends Spring Data JPA's JpaRepository, providing basic CRUD operations.
+ *
+ * @version 1.0
+ * @since 14-12-2023
+ * @author maupa13
+ */
 public interface GameRepository extends JpaRepository<GameEntity, Long> {
 
-    // Create
-    GameEntity save(GameEntity game);
+    GameEntity getGameEntityByTitle(String title);
 
-    // Read
-    List<GameEntity> findAll();
-    Optional<GameEntity> findById(Long id);
-    GameEntity findByTitleIgnoreCase(String title);
-
-    List<GameEntity> findByGenreIgnoreCase(String genre);
-
-    // Update
-    GameEntity saveAndFlush(GameEntity game);
-
-    // Delete
-    void deleteById(Long id);
-    void delete(GameEntity game);
+    GameEntity getGameEntityById(Long id);
 }

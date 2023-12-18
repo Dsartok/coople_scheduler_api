@@ -1,7 +1,7 @@
 package com.coople.gamepartnerservice.exception;
 
 /**
- * Exception thrown when a resource is not found.
+ * Exception thrown when there is duplicate entity.
  * This exception is typically used to indicate that an expected resource,
  * such as a database record could not be located.
  *
@@ -9,14 +9,14 @@ package com.coople.gamepartnerservice.exception;
  * @since 14-12-2023
  * @author maupa13
  */
-public class NotFoundException extends RuntimeException {
+public class DuplicateEntityException extends RuntimeException {
 
     /**
-     * Constructs a new NotFoundException with the specified detail message.
+     * Constructs a new DuplicateEntityException with the specified detail message.
      *
      * @param message the detail message.
      */
-    public NotFoundException(String message){
+    public DuplicateEntityException(String message){
         super(message);
     }
 }

@@ -17,36 +17,72 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity class representing a schedule in the application.
+ * This class is annotated with Lombok's @Getter and @Setter to automatically generate getters and setters.
+ * It is also annotated as a JPA Entity, mapped to the "schedules" table.
+ *
+ * <p>The builder class, {@link ScheduleEntityBuilder}, is a nested static class providing a fluent interface for
+ * constructing instances of {@link ScheduleEntity}.
+ *
+ * @version 1.0
+ * @since 14-12-2023
+ * @author maupa13
+ */
 @Getter
 @Setter
 @Entity
 @Table(name = "schedules")
 public class ScheduleEntity {
 
+    /**
+     * The unique identifier for the schedule.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The name of the schedule.
+     */
     @Column(nullable = false, unique = true)
     private String scheduleName;
 
+    /**
+     * The associated game for the schedule.
+     */
     @ManyToOne
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "game_id", nullable = false)
     private GameEntity game;
 
+    /**
+     * The user associated with the schedule.
+     */
     @ManyToOne
-    @JoinColumn(name = "admin_user_id", nullable = false)
-    private UserEntity adminUser;
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
+    /**
+     * The start time of the schedule.
+     */
     @Column(nullable = false)
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
+    /**
+     * The end time of the schedule (nullable).
+     */
+    @Column(nullable = true)
     private LocalDateTime endTime;
 
+    /**
+     * The number of players associated with the schedule.
+     */
     @Column(nullable = false)
     private int amountOfPlayers;
 
+    /**
+     * The set of participants (type {UserEntity}) associated with the schedule.
+     */
     @ManyToMany
     @JoinTable(
             name = "schedule_participants",
@@ -55,18 +91,24 @@ public class ScheduleEntity {
     )
     private Set<UserEntity> participants = new HashSet<>();
 
-    // Static builder method for ScheduleEntity
+    /**
+     * Static builder method for creating instances of {@link ScheduleEntity}.
+     *
+     * @return A new instance of {@link ScheduleEntityBuilder}.
+     */
     public static ScheduleEntityBuilder builder() {
         return new ScheduleEntityBuilder();
     }
 
-    // Builder class for ScheduleEntity
+    /**
+     * Builder class for constructing instances of {@link ScheduleEntity}.
+     */
     public static class ScheduleEntityBuilder {
 
         private Long id;
         private String scheduleName;
         private GameEntity game;
-        private UserEntity adminUser;
+        private UserEntity user;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
         private int amountOfPlayers;
@@ -90,8 +132,8 @@ public class ScheduleEntity {
             return this;
         }
 
-        public ScheduleEntityBuilder adminUser(UserEntity adminUser) {
-            this.adminUser = adminUser;
+        public ScheduleEntityBuilder user(UserEntity user) {
+            this.user = user;
             return this;
         }
 
@@ -115,12 +157,17 @@ public class ScheduleEntity {
             return this;
         }
 
+        /**
+         * Builds and returns a new instance of {@link ScheduleEntity}.
+         *
+         * @return A new instance of {@link ScheduleEntity}.
+         */
         public ScheduleEntity build() {
             ScheduleEntity scheduleEntity = new ScheduleEntity();
             scheduleEntity.setId(id);
             scheduleEntity.setScheduleName(scheduleName);
             scheduleEntity.setGame(game);
-            scheduleEntity.setAdminUser(adminUser);
+            scheduleEntity.setUser(user);
             scheduleEntity.setStartTime(startTime);
             scheduleEntity.setEndTime(endTime);
             scheduleEntity.setAmountOfPlayers(amountOfPlayers);
