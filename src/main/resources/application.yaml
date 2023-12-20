@@ -1,0 +1,15 @@
+# Main configuration
+
+spring:
+  application:
+    name: coople_scheduler_api
+  profiles:
+    active: ${activatedProperties}
+
+activatedProperties: dev
+
+application:
+  security:
+    jwt:
+      secret-key: "a88d288a60ea60694eb71e667502c653c21a4202e9713ef2076be8c1afb60446"
+      token-duration: 86400000 # a day
